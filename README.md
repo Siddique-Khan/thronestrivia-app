@@ -142,8 +142,10 @@ npm run build
 
 ## Security Notes
 
-- The Gemini API key is injected at **build time** via Vite's `define` option. This means it will be visible in the compiled JavaScript bundle — suitable for personal or demo projects, but not for production apps with sensitive keys.
-- The Maester's system prompt explicitly instructs the model never to reveal its underlying instructions or the API key.
+- The Gemini API key is **never sent to the browser.** The app calls a Cloud Function proxy (`functions/index.js`) at `/api/askMaester`; the function holds the key as a Firebase secret (Secret Manager) and applies the system prompt server-side.
+- Set/rotate the secret with `firebase functions:secrets:set GEMINI_API_KEY`. Never commit the key to `.env*` or inline it into the build.
+- For local `vite` dev, set `VITE_API_BASE` to the deployed origin (e.g. `https://funprojects.ai`) so the dev app calls the live function (CORS is enabled).
+- The Maester's system prompt instructs the model never to reveal its underlying instructions or the API key.
 
 ---
 
